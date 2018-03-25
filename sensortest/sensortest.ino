@@ -17,16 +17,16 @@ void displaySensorDetails(void)
 {
   sensor_t sensor;
   accel.getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" m/s^2");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" m/s^2");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" m/s^2");  
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
+//  Serial.println("------------------------------------");
+//  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+//  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+//  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+//  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" m/s^2");
+//  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" m/s^2");
+//  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" m/s^2");  
+//  Serial.println("------------------------------------");
+//  Serial.println("");
+//  delay(500);
 }
 
 void displayDataRate(void)
@@ -122,8 +122,11 @@ void setup(void)
 
   BTSerial.begin(9600); 
   //BTSerial.begin(38400);
-  
   Serial.begin(9600);
+
+  //Serial.println("AT+UART=9600,0,0");
+  //Serial.print("AT+BAUD4"); 
+  
   Serial.println("Accelerometer Test"); Serial.println("");
   
   /* Initialise the sensor */
@@ -141,12 +144,12 @@ void setup(void)
   // displaySetRange(ADXL345_RANGE_2_G);
   
   /* Display some basic information on this sensor */
-  displaySensorDetails();
+//  displaySensorDetails();
   
   /* Display additional settings (outside the scope of sensor_t) */
-  displayDataRate();
-  displayRange();
-  Serial.println("");
+//  displayDataRate();
+//  displayRange();
+//  Serial.println("");
 
   delay(500);
 }
@@ -158,7 +161,9 @@ void loop(void)
   /* Get a new sensor event */ 
   sensors_event_t event; 
   accel.getEvent(&event);
- 
+
+  // Serial.write("\nCount = ");
+
   /* Display the results (acceleration is measured in m/s^2) */
 //  Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
 //  Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
@@ -167,18 +172,46 @@ void loop(void)
 
   // Keep reading from HC-05 and send to Arduino Serial Monitor
   if (BTSerial.available()) {
-    Serial.write(BTSerial.read());
+//    Serial.print(event.acceleration.x);
+//    Serial.print(event.acceleration.y);
+//    Serial.write(BTSerial.read());
   }
   
   // Keep reading from Arduino Serial Monitor and send to HC-05
   if (Serial.available()) {
-    BTSerial.write(Serial.read());
+ //   BTSerial.write(Serial.read());
+ //   BTSerial.print(event.acceleration.x);
+ //   BTSerial.print(event.acceleration.y);
   }
+//
+    char str[5];
+    dtostrf(event.acceleration.x, 5, 2, str);
+    Serial.println(str);
+    BTSerial.println(str);
 
-  count++;
-  Serial.write("\nCount = ");
-  Serial.write(count);
-  BTSerial.write("\nCount = ");
-  BTSerial.write(count);
-  delay(1000);
+
+    dtostrf(event.acceleration.y, 5, 2, str);
+    Serial.println(str);
+    BTSerial.println(str);
+
+    
+  //  Serial.println(event.acceleration.x);
+  //  Serial.println(event.acceleration.y);
+//    string tmpString = event.acceleration.x + " " + event.acceleration.y;
+
+    
+//    dtostrf(temp, 4, 2, str_temp);
+ //   BTSerial.println(event.acceleration.y);
+//    BTSerial.println(tmpString);
+//BTSerial.println(5);
+//BTSerial.println(4);
+
+//Serial.println(BTSerial.read());
+//  count++;
+//  Serial.write("\nCount = ");
+//  Serial.write(count);
+//  BTSerial.write("\nCount = ");
+//  BTSerial.write(count);
+//  delay(1500);
+  delay(500);
 }
